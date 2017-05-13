@@ -17,7 +17,7 @@ Simply run with:
 
 ## Interactions on discord
 
-Users can start a quiz with !ask or !quiz, stop a running quiz with !stop or !halt, move onto the next question with !next, or force the bot to exit with !logoff.  !scores will give the current scoreboard.  First user to ten questions right wins. Users can only answer questions or progress to the next question from the same channel the bot is running the quiz in. The quiz can be halted or started from any channel. Only one quiz may run at a time.
+Users can start a quiz with `!ask` or `!quiz`, stop a running quiz with `!stop` or `!halt`, move onto the next question with `!next`, or force the bot to exit with `!logoff`.  `!scores` will give the current scoreboard.  First user to ten questions right wins. Users can only answer questions or progress to the next question from the same channel the bot is running the quiz in. The quiz can be halted or started from any channel. Only one quiz may run at a time.
 
 ## Known limitations
 
