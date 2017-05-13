@@ -2,7 +2,7 @@
 """
 Quiz / Question classes for quizbot.
 
-@author: Kat
+@author: drkatnz
 """
 
 import asyncio
@@ -16,11 +16,12 @@ import os
 
 class Quiz:
     
-    def __init__(self, client, win_limit=10):
+    def __init__(self, client, win_limit=10, hint_time=30):
         #initialises the quiz
         self.__running = False
         self.current_question = None
         self._win_limit = win_limit
+        self._hint_time = hint_time
         self._questions = []
         self._asked = []
         self.scores = {}
@@ -30,7 +31,6 @@ class Quiz:
        
         
         #load in some questions
-        #self._load_questions('quizdata/questions.dtron.en')
         datafiles = os.listdir('quizdata')
         for df in datafiles:
             filepath = 'quizdata' + os.path.sep + df
@@ -47,7 +47,8 @@ class Quiz:
             
         question = None
         category = None
-        answer = None        
+        answer = None      
+        regex = None
         position = 0
         
         while position < len(lines):
@@ -59,12 +60,13 @@ class Quiz:
                 #add question
                 if question is not None and answer is not None:
                     q = Question(question=question, answer=answer, 
-                                 category=category)
+                                 category=category, regex=regex)
                     self._questions.append(q)
                 else:
                     question = None
                     category = None
                     answer = None
+                    regex = None
                 position += 1
                 continue
                 
@@ -74,7 +76,8 @@ class Quiz:
                 question = lines[position].strip()[lines[position].find(':') + 1:].strip()
             elif lines[position].strip().lower().startswith('answer'):
                 answer = lines[position].strip()[lines[position].find(':') + 1:].strip()
-            
+            elif lines[position].strip().lower().startswith('regexp'):
+                regex = lines[position].strip()[lines[position].find(':') + 1:].strip()
             #else ignore
             position += 1
                 
@@ -90,8 +93,9 @@ class Quiz:
     
     
     async def _hint(self, hint_question, hint_number):
+        #offers a hint to the user
         if self.__running and self.current_question is not None:
-            await asyncio.sleep(10)
+            await asyncio.sleep(self._hint_time)
             if (self.current_question == hint_question 
                  and self._cancel_callback == False):
                 if (hint_number >= 5):
@@ -104,6 +108,7 @@ class Quiz:
     
     
     async def start(self, channel):
+        #starts the quiz in the given channel.
         if self.__running:
             #don't start again
             await self._client.send_message(self._channel, 
@@ -117,6 +122,7 @@ class Quiz:
             
             
     async def stop(self):
+        #stops the quiz from running
         if self.__running:
             #print results
             #stop quiz
@@ -133,6 +139,7 @@ class Quiz:
             
     
     async def ask_question(self):
+        #asks a question in the quiz
         if self.__running:
             #grab a random question
             self._hint_number = 0
@@ -147,6 +154,7 @@ class Quiz:
             
             
     async def next_question(self, channel):
+        #moves to the next question
         if self.__running:
             if channel == self._channel:
                 await self._client.send_message(self._channel, 
@@ -158,6 +166,7 @@ class Quiz:
             
             
     async def answer_question(self, message):
+        #checks the answer to a question
         if self.__running and self.current_question is not None:
             if message.channel != self._channel:
                 pass
@@ -195,6 +204,7 @@ class Quiz:
                 
                 
     async def print_scores(self):
+        #prints out a table of scores.
         if self.__running:
             await self._client.send_message(self._channel,'Current quiz results:')
         else:
@@ -222,6 +232,7 @@ class Quiz:
     
     
 class Question:
+    # A question in a quiz
     def __init__(self, question, answer, category=None, author=None, regex=None):
         self.question = question
         self.answer = answer
@@ -232,6 +243,7 @@ class Question:
         
         
     def ask_question(self):
+        # gets a pretty formatted version of the question.
         question_text = ''
         if self.category is not None:
             question_text+='({}) '.format(self.category)
@@ -244,6 +256,8 @@ class Question:
     
     
     def answer_correct(self, answer):
+        #checks if an answer is correct or not.
+        
         #should check regex
         if self.regex is not None:
             match = re.fullmatch(self.regex.strip(),answer.strip())
@@ -254,6 +268,7 @@ class Question:
     
     
     def get_hint(self, hint_number):
+        # gets a formatted hint for the question
         hint = []
         for i in range(len(self.answer)):
             if i % 5 < hint_number:
@@ -268,6 +283,7 @@ class Question:
         
     
     def get_answer(self):
+        # gets the expected answer
         return self.answer
     
     

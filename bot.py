@@ -5,7 +5,7 @@ Discord Bot
 Using https://github.com/Rapptz/discord.py installed from source
 API: http://discordpy.readthedocs.io/en/latest/api.html
 
-@author: Kat
+@author: drkatnz
 """
 
 import discord
@@ -18,8 +18,8 @@ quiz = quiz.Quiz(client)
 
 @client.event
 async def on_ready():
-    print('Logged in as:' + client.user.name)
-    print('User ID:' + client.user.id)
+    print('Logged in as: ' + client.user.name)
+    print('User ID: ' + client.user.id)
     print('------')
 
 @client.event
