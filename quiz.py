@@ -42,7 +42,7 @@ class Quiz:
     
     def _load_questions(self, question_file):
         # loads in the questions for the quiz
-        with open(question_file) as qfile:
+        with open(question_file, encoding='utf-8',errors='replace') as qfile:
             lines = qfile.readlines()
             
         question = None
@@ -102,7 +102,7 @@ class Quiz:
                     await self.next_question(self._channel)
                 
                 hint = self.current_question.get_hint(hint_number)
-                await self._client.send_message(self._channel, 'Hint {}: {}'.format(self._hint_number, hint))
+                await self._client.send_message(self._channel, 'Hint {}: {}'.format(hint_number, hint))
                 if hint_number < 5:
                     await self._hint(hint_question, hint_number + 1) 
     

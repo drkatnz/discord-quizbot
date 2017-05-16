@@ -1,6 +1,6 @@
 # discord-quizbot
 
-A trivia bot for discord, written in python. Runs a quiz where the first user to ten questions wins.
+A trivia bot for discord, written in python. Runs a quiz where the first user to ten correct answers wins.
 
 ## Pre-requisites:
 
