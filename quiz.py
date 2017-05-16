@@ -62,11 +62,12 @@ class Quiz:
                     q = Question(question=question, answer=answer, 
                                  category=category, regex=regex)
                     self._questions.append(q)
-                else:
-                    question = None
-                    category = None
-                    answer = None
-                    regex = None
+                    
+                #reset everything
+                question = None
+                category = None
+                answer = None
+                regex = None
                 position += 1
                 continue
                 
@@ -142,7 +143,6 @@ class Quiz:
         #asks a question in the quiz
         if self.__running:
             #grab a random question
-            self._hint_number = 0
             qpos = random.randint(0,len(self._questions) - 1)
             self.current_question = self._questions[qpos]
             self._questions.remove(self.current_question)
