@@ -32,7 +32,8 @@ async def on_message(message):
     elif (message.content.startswith('!halt') or 
           message.content.startswith('!stop')):
         await quiz.stop()
-
+    elif (message.content.startswith('!reset')):
+        await quiz.reset()        
     elif (message.content.startswith('!quiz') or 
           message.content.startswith('!ask')):
         await quiz.start(message.channel)      

@@ -112,14 +112,29 @@ class Quiz:
         #starts the quiz in the given channel.
         if self.__running:
             #don't start again
-            await self._client.send_message(self._channel, 
+            await self._client.send_message(channel, 
              'Quiz already started in channel {}, you can stop it with !stop or !halt'.format(self._channel.name))
         else:
+            await self.reset()
             self._channel = channel
             await self._client.send_message(self._channel, '@here Quiz starting in 10 seconds...')
             await asyncio.sleep(10)
             self.__running = True
             await self.ask_question()
+            
+            
+    async def reset(self):
+        if self.__running:
+            #stop
+            await self.stop()
+        
+        #reset the scores
+        self.current_question = None
+        self._cancel_callback = True
+        self.__running = False
+        self._questions.append(self._asked)
+        self._asked = []
+        self.scores = {}
             
             
     async def stop(self):
@@ -187,9 +202,9 @@ class Quiz:
                 #check win
                 if self.scores[message.author.name] == self._win_limit:
                     
-                    self.print_scores()
+                    await self.print_scores()
                     await self._client.send_message(self._channel, '{} has won! Congratulations.'.format(message.author.name))
-                    self._questions.append(self.__asked)
+                    self._questions.append(self._asked)
                     self._asked = []
                     self.__running = False                    
                 
@@ -215,6 +230,9 @@ class Quiz:
             await self._client.send_message(self._channel,'{}:\t{}'.format(name,self.scores[name]))
             if self.scores[name] > highest:
                 highest = self.scores[name]
+                
+        if len(self.scores) == 0:
+            await self._client.send_message(self._channel,'No results to display.')
                 
         leaders = []
         for name in self.scores:
